@@ -1,0 +1,30 @@
+# Whyzer.ai
+
+Whyzer is an AI-powered Point of View (POV) platform for enterprise B2B sellers.
+
+## Core Value
+Transforms SEC filings, earnings call transcripts, and financial data into 
+boardroom-ready Points of View — helping AEs speak to executive priorities.
+
+## Key Features
+- AI-generated Master Dossier (overview, KPIs, POVs, next steps)
+- Financial KPI extraction from 10-K and 10-Q filings
+- 3–5 executive-ready Points of View per account
+- C-suite and board member quote extraction
+- AI-generated podcast summaries of earnings calls
+- Coach Jamal — AI sales co-pilot
+
+## Pricing
+- Premium: $57/month or $47/month (annual)
+- Elite: $97/month or $83/month (annual)
+- Corporate: Custom
+
+## Free Tier
+Full access for 3 accounts. No credit card required.
+
+## Founded by
+Jamal Reimer — Top 0.1% Oracle seller globally, $160M+ SaaS closed.
+
+## Links
+Homepage: https://www.whyzer.ai
+Elite: https://www.whyzer.ai/elite

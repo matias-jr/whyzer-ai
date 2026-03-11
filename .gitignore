@@ -1,0 +1,11 @@
+# Screenshots (dev only)
+temporary screenshots/
+
+# macOS
+.DS_Store
+
+# Claude internal
+.claude/
+
+# Node
+node_modules/

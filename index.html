@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Whyzer — AI Point of View Platform for Enterprise Sellers</title>
+<meta name="description" content="Whyzer turns SEC filings, earnings calls, and financial data into boardroom-ready Points of View — instantly. Built for enterprise AEs closing 7- and 8-figure deals."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Whyzer",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "description": "AI-powered Point of View platform for enterprise B2B sellers. Transforms SEC filings and earnings calls into boardroom-ready sales narratives.",
+  "offers": [
+    {"@type":"Offer","name":"Premium","price":"57","priceCurrency":"USD"},
+    {"@type":"Offer","name":"Elite","price":"97","priceCurrency":"USD"},
+    {"@type":"Offer","name":"Corporate","description":"Custom pricing"}
+  ],
+  "creator": {
+    "@type": "Organization",
+    "name": "Whyzer",
+    "url": "https://www.whyzer.ai"
+  }
+}
+</script>
+<style>
+:root {
+  --bg-base:       #080808;
+  --bg-surface:    #101010;
+  --bg-elevated:   #161616;
+  --bg-nav:        rgba(8, 8, 8, 0.9);
+  --chrome-bright: #EFEFEF;
+  --chrome-mid:    #C0C0C0;
+  --chrome-dim:    #888888;
+  --chrome-ghost:  rgba(192, 192, 192, 0.08);
+  --gradient-chrome: linear-gradient(135deg, #A0A0A0 0%, #EFEFEF 42%, #BDBDBD 100%);
+  --gradient-chrome-text: linear-gradient(135deg, #C8C8C8 0%, #FFFFFF 50%, #A8A8A8 100%);
+  --gradient-subtle: linear-gradient(135deg, rgba(160,160,160,0.12) 0%, rgba(239,239,239,0.06) 100%);
+  --text-primary:   #EEEEEE;
+  --text-secondary: #666666;
+  --text-muted:     #333333;
+  --teal:           #5EEAD4;
+  --teal-dim:       rgba(94, 234, 212, 0.15);
+  --border:         rgba(255, 255, 255, 0.06);
+  --border-mid:     rgba(255, 255, 255, 0.11);
+  --border-chrome:  rgba(192, 192, 192, 0.18);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.018;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+.text-chrome {
+  background: var(--gradient-chrome-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* Reveal: visible by default; JS adds .js-loaded to body to enable animations */
+.reveal {
+  transition: opacity 700ms cubic-bezier(0.16,1,0.3,1), transform 700ms cubic-bezier(0.16,1,0.3,1);
+}
+body.js-loaded .reveal {
+  opacity: 0;
+  transform: translateY(24px);
+}
+body.js-loaded .reveal.visible { opacity: 1; transform: none; }
+[data-delay="1"] { transition-delay: 80ms; }
+[data-delay="2"] { transition-delay: 160ms; }
+[data-delay="3"] { transition-delay: 240ms; }
+[data-delay="4"] { transition-delay: 320ms; }
+
+/* Marquee */
+@keyframes marquee-l { to { transform: translateX(-50%); } }
+@keyframes marquee-r { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+.marquee-l { animation: marquee-l 36s linear infinite; display:flex; }
+.marquee-r { animation: marquee-r 44s linear infinite; display:flex; }
+.marquee-wrap:hover .marquee-l,
+.marquee-wrap:hover .marquee-r { animation-play-state: paused; }
+
+/* Nav */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; height: 64px; z-index: 1000;
+  background: var(--bg-nav);
+  backdrop-filter: blur(24px) saturate(160%);
+  border-bottom: 1px solid transparent;
+  transition: border-color 300ms ease;
+  display: flex; align-items: center;
+}
+#nav.scrolled { border-bottom-color: var(--border); }
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 32px;
+  display: flex; align-items: center; width: 100%; gap: 40px;
+}
+.nav-logo img { height: 30px; display: block; }
+.nav-links {
+  display: flex; align-items: center; gap: 32px; flex: 1; justify-content: center;
+}
+.nav-links a {
+  font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text-secondary);
+  text-decoration: none; transition: color 150ms ease;
+}
+.nav-links a:hover { color: var(--text-primary); }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-login {
+  font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text-secondary);
+  text-decoration: none; transition: color 150ms ease;
+}
+.nav-login:hover { color: var(--text-primary); }
+.btn-chrome {
+  background: var(--gradient-chrome); color: #080808;
+  font-family: 'DM Sans', sans-serif; font-weight: 600;
+  border: none; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;
+  transition: filter 150ms ease, box-shadow 150ms ease, transform 100ms ease;
+}
+.btn-chrome:hover { filter: brightness(1.1); box-shadow: 0 0 22px rgba(192,192,192,0.2); }
+.btn-chrome:active { transform: scale(0.97); }
+.btn-ghost {
+  background: transparent; color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  border: 1px solid var(--border-mid); cursor: pointer; text-decoration: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background 150ms ease;
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.04); }
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+.hamburger span { display: block; width: 22px; height: 1.5px; background: var(--text-secondary); transition: all 200ms ease; }
+.mobile-menu {
+  display: none; position: fixed; top: 64px; left: 0; right: 0;
+  background: var(--bg-base); border-bottom: 1px solid var(--border);
+  padding: 24px 32px; flex-direction: column; gap: 20px; z-index: 999;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  font-family: 'DM Sans'; font-size: 16px; color: var(--text-secondary); text-decoration: none;
+}
+
+/* Hero */
+#hero {
+  height: 100vh; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
+}
+#hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+.hero-parallax {
+  position: absolute; inset: 0; z-index: 1;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.hero-content {
+  position: relative; z-index: 10; text-align: center;
+  display: flex; flex-direction: column; align-items: center;
+  max-width: 760px; padding: 0 24px;
+}
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.14em;
+  margin-bottom: 20px;
+}
+.hero-h1 {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: clamp(42px, 7vw, 78px);
+  letter-spacing: -0.04em; line-height: 1.0;
+  color: var(--text-primary); margin-bottom: 24px;
+}
+.hero-sub {
+  font-family: 'DM Sans', sans-serif; font-size: 19px;
+  color: var(--text-secondary); max-width: 500px; line-height: 1.65;
+  margin-bottom: 40px;
+}
+.hero-ctas { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.hero-social {
+  margin-top: 26px;
+  font-family: 'DM Sans'; font-size: 13px; color: var(--text-muted);
+  display: flex; align-items: center; gap: 8px;
+}
+.hero-stars { color: var(--chrome-mid); letter-spacing: 2px; }
+.scroll-indicator {
+  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 10;
+}
+.scroll-indicator span {
+  font-family: 'JetBrains Mono'; font-size: 10px; color: var(--text-muted); letter-spacing: 0.12em;
+}
+@keyframes pulse-opacity { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.scroll-chevron { animation: pulse-opacity 2s ease-in-out infinite; color: var(--text-muted); }
+
+/* Trust bar */
+#trust-bar {
+  height: 68px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; overflow: hidden; gap: 32px; padding: 0 32px;
+}
+.trust-label {
+  font-family: 'DM Sans'; font-size: 13px; color: var(--text-muted);
+  white-space: nowrap; flex-shrink: 0;
+}
+.trust-marquee-wrap { flex: 1; overflow: hidden; position: relative; }
+.trust-marquee-wrap::before, .trust-marquee-wrap::after {
+  content:''; position:absolute; top:0; bottom:0; width:80px; z-index:2; pointer-events:none;
+}
+.trust-marquee-wrap::before { left:0; background: linear-gradient(to right, var(--bg-base), transparent); }
+.trust-marquee-wrap::after { right:0; background: linear-gradient(to left, var(--bg-base), transparent); }
+.trust-track {
+  display: flex; align-items: center; gap: 0; white-space: nowrap;
+  animation: marquee-l 32s linear infinite;
+}
+.trust-track:hover { animation-play-state: paused; }
+.trust-item {
+  font-family: 'JetBrains Mono'; font-size: 13px; color: var(--text-muted);
+  letter-spacing: 0.08em; padding: 0 28px; display: flex; align-items: center; gap: 28px;
+}
+.trust-sep { opacity: 0.2; flex-shrink: 0; }
+
+/* Section shared */
+.section-pad { padding: 120px 0; }
+.section-inner { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+.eyebrow {
+  font-family: 'JetBrains Mono'; font-size: 11px; color: var(--text-secondary);
+  text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 16px;
+}
+.section-heading {
+  font-family: 'Syne'; font-weight: 700; font-size: clamp(32px, 4vw, 44px);
+  color: var(--text-primary); letter-spacing: -0.01em; line-height: 1.15;
+}
+
+/* Problem Statement */
+.problem-grid {
+  display: grid; grid-template-columns: 42% 58%; gap: 80px; align-items: center;
+}
+.problem-left { }
+.problem-statement {
+  font-family: 'Syne'; font-size: clamp(24px, 2.5vw, 35px);
+  font-weight: 500; line-height: 1.3; color: var(--text-primary);
+}
+.problem-cards { display: flex; flex-direction: column; gap: 10px; }
+.problem-card {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 20px 24px;
+  display: flex; gap: 16px; align-items: flex-start;
+  transition: background 200ms ease, border-color 200ms ease, transform 200ms ease;
+  cursor: default;
+}
+.problem-card:hover {
+  background: var(--bg-elevated); border-color: var(--border-mid);
+  transform: translateY(-1px);
+}
+.problem-card-icon { color: var(--text-muted); flex-shrink: 0; margin-top: 2px; }
+.problem-card-title { font-family: 'Syne'; font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+.problem-card-body { font-family: 'DM Sans'; font-size: 14px; color: var(--text-secondary); line-height: 1.55; }
+
+/* Product Showcase */
+#product { padding: 120px 0; }
+.product-grid { display: grid; grid-template-columns: 38% 62%; gap: 60px; align-items: start; }
+.product-tabs { display: flex; flex-direction: column; gap: 0; }
+.product-tab {
+  border-left: 2px solid transparent;
+  padding: 16px 20px; cursor: pointer;
+  transition: all 200ms ease; border-radius: 0 8px 8px 0;
+}
+.product-tab.active {
+  border-left-color: var(--chrome-mid);
+  background: var(--bg-elevated);
+}
+.product-tab-label {
+  font-family: 'Syne'; font-size: 15px; font-weight: 600;
+  color: var(--text-secondary); transition: color 200ms ease;
+}
+.product-tab.active .product-tab-label { color: var(--text-primary); }
+.product-tab-body {
+  font-family: 'DM Sans'; font-size: 14px; color: var(--text-secondary); line-height: 1.6;
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 300ms ease, opacity 250ms ease, padding-top 200ms ease;
+}
+.product-tab.active .product-tab-body { max-height: 120px; opacity: 1; padding-top: 8px; }
+.product-mockup {
+  background: #0A0A0A; border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.9), 0 0 60px rgba(192,192,192,0.04);
+  overflow: hidden; position: relative;
+}
+.mockup-titlebar {
+  height: 34px; background: #121212; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 12px; gap: 12px;
+}
+.mockup-dots { display: flex; gap: 6px; }
+.mockup-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--text-muted); opacity: 0.3; }
+.mockup-url {
+  flex: 1; text-align: center;
+  font-family: 'JetBrains Mono'; font-size: 11px; color: var(--text-muted);
+}
+.mockup-body { display: flex; min-height: 320px; }
+.mockup-sidebar {
+  width: 50px; border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; align-items: center; padding: 16px 0; gap: 16px;
+}
+.mockup-sidebar-dot { width: 20px; height: 20px; border-radius: 4px; background: var(--border); }
+.mockup-sidebar-dot:first-child { background: var(--chrome-ghost); }
+.mockup-main { flex: 1; padding: 20px; }
+.mockup-pov-card {
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px;
+}
+.mockup-pov-title { font-family: 'Syne'; font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+.mockup-tags { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.mockup-tag {
+  font-family: 'JetBrains Mono'; font-size: 10px; color: var(--text-secondary);
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  padding: 3px 8px; border-radius: 4px;
+}
+.mockup-lines { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.mockup-line { height: 9px; border-radius: 3px; background: var(--bg-surface); }
+.mockup-actions { display: flex; gap: 8px; }
+.mockup-btn-primary {
+  height: 30px; padding: 0 14px; border-radius: 5px; font-size: 12px;
+  font-family: 'DM Sans'; font-weight: 600; cursor: pointer; border: none;
+  background: var(--gradient-chrome); color: #080808;
+}
+.mockup-btn-ghost {
+  height: 30px; padding: 0 14px; border-radius: 5px; font-size: 12px;
+  font-family: 'DM Sans'; cursor: pointer;
+  background: transparent; border: 1px solid var(--border-mid); color: var(--text-secondary);
+}
+.floating-badge {
+  position: absolute; background: var(--bg-surface); border: 1px solid var(--border-mid);
+  border-radius: 8px; padding: 8px 12px;
+  font-family: 'JetBrains Mono'; font-size: 10px; color: var(--text-secondary);
+  white-space: nowrap; box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+}
+.floating-badge .val { color: var(--teal); }
+@keyframes float-1 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+@keyframes float-2 { 0%,100%{transform:translateY(-4px)} 50%{transform:translateY(2px)} }
+@keyframes float-3 { 0%,100%{transform:translateY(2px)} 50%{transform:translateY(-8px)} }
+
+/* How It Works */
+#how-it-works { position: relative; height: 300vh; }
+.how-sticky {
+  position: sticky; top: 0; height: 100vh;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+  max-width: 1200px; margin: 0 auto; padding: 0 48px;
+}
+.how-left { position: relative; }
+.how-heading {
+  font-family: 'Syne'; font-weight: 700; font-size: clamp(28px, 3vw, 42px);
+  color: var(--text-primary); line-height: 1.15; margin-bottom: 32px;
+}
+.how-steps { position: relative; padding-left: 28px; }
+.how-progress-line {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 1px;
+  background: var(--text-muted);
+}
+.how-progress-fill {
+  position: absolute; left: -0.5px; top: 0; width: 2px;
+  background: var(--gradient-chrome); transition: height 50ms linear;
+}
+.how-progress-dots {
+  position: absolute; left: -3px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  top: 0; bottom: 0;
+}
+.how-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--text-muted); transition: background 300ms ease;
+  flex-shrink: 0;
+}
+.how-dot.active { background: var(--gradient-chrome); }
+.how-step { border-top: 1px solid var(--border); padding: 28px 0; cursor: default; }
+.how-step-num {
+  font-family: 'JetBrains Mono'; font-weight: 700; font-size: 56px; line-height: 1;
+  color: var(--text-muted); transition: color 300ms ease; margin-bottom: 6px;
+}
+.how-step-num.active { background: var(--gradient-chrome-text); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.how-step-title {
+  font-family: 'Syne'; font-size: 20px; font-weight: 600;
+  color: var(--text-muted); transition: color 300ms ease; margin-bottom: 0;
+}
+.how-step-title.active { color: var(--text-primary); }
+.how-step-body {
+  font-family: 'DM Sans'; font-size: 15px; color: var(--text-secondary); line-height: 1.6;
+  max-height: 0; opacity: 0; overflow: hidden;
+  transition: max-height 350ms ease, opacity 300ms ease, padding-top 200ms ease;
+}
+.how-step-body.active { max-height: 120px; opacity: 1; padding-top: 10px; }
+.how-micro { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 300ms ease, opacity 250ms ease, padding-top 200ms ease; }
+.how-micro.active { max-height: 80px; opacity: 1; padding-top: 10px; }
+.how-search {
+  font-family: 'JetBrains Mono'; font-size: 13px; color: var(--text-primary);
+  background: var(--bg-elevated); border: 1px solid var(--border-mid);
+  padding: 10px 14px; border-radius: 6px; display: inline-block;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.cursor { animation: blink 1s step-end infinite; }
+.how-loader { display: flex; align-items: center; gap: 8px; }
+.how-loader-text { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--text-secondary); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 1s linear infinite; display: inline-block; }
+.how-pov-badge {
+  display: inline-block;
+  background: rgba(94,234,212,0.08); border: 1px solid rgba(94,234,212,0.2);
+  font-family: 'JetBrains Mono'; font-size: 12px; color: var(--teal);
+  padding: 8px 14px; border-radius: 20px;
+}
+.how-right { }
+.how-video-container {
+  position: relative; border-radius: 16px; overflow: hidden;
+  aspect-ratio: 16/10; border: 1px solid var(--border);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.85), 0 0 40px rgba(192,192,192,0.04);
+  background: #0A0A0A;
+}
+#how-canvas { width: 100%; height: 100%; display: block; }
+.how-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+  background: linear-gradient(to top, rgba(8,8,8,0.85) 0%, transparent 100%);
+  display: flex; align-items: flex-end; padding: 0 16px 12px;
+  z-index: 2;
+}
+.how-label {
+  font-family: 'JetBrains Mono'; font-size: 11px; color: var(--text-secondary);
+  opacity: 0; transition: opacity 300ms ease; position: absolute;
+  bottom: 12px; left: 16px;
+}
+.how-label.active { opacity: 1; }
+.how-label.teal { color: var(--teal); }
+.how-loading {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 12px; z-index: 3;
+  background: #0A0A0A;
+}
+.how-loading-text { font-family: 'JetBrains Mono'; font-size: 11px; color: var(--text-muted); }
+.wave-animate { stroke-dasharray: 200; stroke-dashoffset: 200; animation: draw-wave 2s ease-in-out infinite alternate; }
+@keyframes draw-wave { to { stroke-dashoffset: 0; } }
+
+/* Wave divider */
+.wave-divider { width: 100%; height: 40px; opacity: 0.05; overflow: hidden; }
+
+/* Features Bento */
+#features { padding: 120px 0; }
+.bento-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.bento-card {
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 28px 32px;
+  transition: background 200ms ease, border-color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+  cursor: default;
+}
+.bento-card:hover {
+  background: var(--bg-elevated); border-color: var(--border-mid);
+  transform: translateY(-2px); box-shadow: 0 0 40px rgba(192,192,192,0.04);
+}
+.bento-card.span2 { grid-column: span 2; }
+.bento-card-title { font-family: 'Syne'; font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+.bento-card-body { font-family: 'DM Sans'; font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+.bento-icon { color: var(--text-muted); margin-bottom: 14px; }
+.bento-chart-area { width: 100%; height: 130px; margin-bottom: 16px; }
+.bento-bars { display: flex; align-items: flex-end; gap: 4px; height: 40px; margin-bottom: 16px; }
+.bento-bar {
+  flex: 1; border-radius: 2px 2px 0 0;
+  background: var(--chrome-dim);
+}
+@keyframes bar-osc-1 { 0%,100%{height:100%} 50%{height:40%} }
+@keyframes bar-osc-2 { 0%,100%{height:60%} 50%{height:100%} }
+@keyframes bar-osc-3 { 0%,100%{height:80%} 50%{height:30%} }
+@keyframes bar-osc-4 { 0%,100%{height:40%} 50%{height:90%} }
+@keyframes bar-osc-5 { 0%,100%{height:70%} 50%{height:50%} }
+.bento-bar:nth-child(1) { animation: bar-osc-1 2.0s ease-in-out infinite; opacity:0.9; }
+.bento-bar:nth-child(2) { animation: bar-osc-2 2.2s ease-in-out infinite 0.2s; opacity:0.7; }
+.bento-bar:nth-child(3) { animation: bar-osc-3 1.8s ease-in-out infinite 0.4s; opacity:0.85; }
+.bento-bar:nth-child(4) { animation: bar-osc-4 2.4s ease-in-out infinite 0.1s; opacity:0.6; }
+.bento-bar:nth-child(5) { animation: bar-osc-5 2.1s ease-in-out infinite 0.3s; opacity:0.75; }
+.bento-quote-mark {
+  font-family: 'Syne'; font-size: 80px; font-weight: 800;
+  color: var(--chrome-mid); opacity: 0.22; display: block; line-height: 0.75;
+  margin-bottom: 10px;
+}
+
+/* Testimonials */
+#testimonials { padding: 80px 0; overflow: hidden; }
+.test-row { overflow: hidden; margin-bottom: 12px; }
+.test-track { display: flex; }
+.test-card {
+  width: 300px; flex-shrink: 0; margin: 0 6px;
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px 28px;
+}
+.test-quote-mark { font-family: 'Syne'; font-size: 32px; font-weight: 800; color: var(--chrome-mid); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.test-quote { font-family: 'DM Sans'; font-size: 15px; color: var(--text-primary); line-height: 1.6; }
+.test-author { font-family: 'DM Sans'; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-top: 16px; }
+
+/* Pricing */
+#pricing { padding: 120px 0; }
+.billing-toggle-wrap { display: flex; align-items: center; gap: 12px; margin: 24px auto 48px; width: fit-content; }
+.billing-label { font-family: 'DM Sans'; font-size: 14px; color: var(--text-secondary); }
+.billing-label.active { color: var(--text-primary); }
+.toggle-pill {
+  width: 48px; height: 26px; border-radius: 13px;
+  background: var(--bg-elevated); border: 1px solid var(--border-mid);
+  position: relative; cursor: pointer; transition: background 200ms ease;
+  flex-shrink: 0;
+}
+.toggle-pill.on { background: var(--gradient-chrome); border-color: transparent; }
+.toggle-knob {
+  position: absolute; top: 3px; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--text-muted); transition: left 200ms ease, background 200ms ease;
+  left: 4px;
+}
+.toggle-pill.on .toggle-knob { left: 22px; background: #080808; }
+.billing-save { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--teal); background: var(--teal-dim); padding: 3px 8px; border-radius: 10px; }
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 1100px; margin: 0 auto; align-items: start; }
+.pricing-card {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 36px 32px; position: relative;
+}
+.pricing-card.elite {
+  border-color: var(--border-chrome); margin-top: -16px; padding: 52px 32px 44px;
+  box-shadow: 0 0 80px rgba(192,192,192,0.08), 0 24px 60px rgba(0,0,0,0.7);
+  z-index: 10;
+}
+.pricing-badge {
+  position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+  background: var(--gradient-chrome); color: #080808;
+  font-family: 'JetBrains Mono'; font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 5px 18px; border-radius: 20px; white-space: nowrap;
+}
+.pricing-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.pricing-plan-name { font-family: 'JetBrains Mono'; font-size: 10px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.1em; }
+.pricing-plan-name.elite-name { color: var(--chrome-mid); }
+.pricing-tier-pill {
+  font-family: 'JetBrains Mono'; font-size: 10px; color: var(--text-secondary);
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  padding: 4px 10px; border-radius: 20px;
+}
+.pricing-tier-pill.elite-pill { background: rgba(192,192,192,0.1); border-color: var(--border-chrome); color: var(--chrome-mid); }
+.pricing-price {
+  font-family: 'JetBrains Mono'; font-weight: 700; font-size: 50px; line-height: 1; color: var(--text-primary);
+  display: flex; align-items: baseline; gap: 4px;
+}
+.pricing-mo { font-family: 'DM Sans'; font-size: 16px; font-weight: 400; color: var(--text-secondary); }
+.pricing-sub { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--text-muted); margin-top: 4px; margin-bottom: 20px; }
+.pricing-divider { height: 1px; background: var(--border); margin: 20px 0; }
+.pricing-features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+.pricing-feature { display: flex; align-items: flex-start; gap: 10px; }
+.pricing-feature-icon { flex-shrink: 0; margin-top: 2px; }
+.pricing-feature-text { font-family: 'DM Sans'; font-size: 14px; color: var(--text-secondary); line-height: 1.4; }
+.pricing-feature-text.elite-text { color: var(--text-primary); }
+.vault-row {
+  background: rgba(192,192,192,0.04); border-radius: 6px;
+  padding: 8px 10px; margin: 4px -10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.vault-row-text { font-family: 'Syne'; font-size: 14px; font-weight: 600; color: var(--chrome-mid); }
+.pricing-cta-ghost {
+  width: 100%; height: 44px; border-radius: 8px; border: 1px solid var(--border-mid);
+  background: transparent; color: var(--text-primary);
+  font-family: 'DM Sans'; font-size: 14px; font-weight: 500; cursor: pointer;
+  transition: background 150ms ease; text-decoration: none; display: flex; align-items: center; justify-content: center;
+}
+.pricing-cta-ghost:hover { background: rgba(255,255,255,0.04); }
+.pricing-cta-chrome {
+  width: 100%; height: 48px; border-radius: 8px; border: none;
+  background: var(--gradient-chrome); color: #080808;
+  font-family: 'DM Sans'; font-size: 15px; font-weight: 600; cursor: pointer;
+  transition: filter 150ms ease, box-shadow 150ms ease; text-decoration: none; display: flex; align-items: center; justify-content: center;
+}
+.pricing-cta-chrome:hover { filter: brightness(1.08); box-shadow: 0 0 30px rgba(192,192,192,0.25); }
+.pricing-footer { text-align: center; margin-top: 28px; font-family: 'DM Sans'; font-size: 13px; color: var(--text-muted); }
+.price-annual, .price-monthly, .sub-annual, .sub-monthly { transition: opacity 120ms ease; }
+.price-monthly, .sub-monthly { display: none; }
+
+/* Elite section */
+#elite { padding: 120px 0; }
+.elite-grid { display: grid; grid-template-columns: 55% 45%; gap: 60px; align-items: start; }
+.vault-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 36px; }
+.vault-tile {
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 18px; display: flex; align-items: center; gap: 12px;
+  transition: background 150ms ease, border-color 150ms ease; cursor: default;
+}
+.vault-tile:hover { background: var(--bg-elevated); border-color: var(--border-mid); }
+.vault-tile-icon { color: var(--text-muted); flex-shrink: 0; }
+.vault-tile-text { font-family: 'Syne'; font-size: 14px; font-weight: 500; color: var(--text-primary); }
+.exclusivity-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(192,192,192,0.05); border: 1px solid var(--border-chrome);
+  padding: 8px 14px; border-radius: 20px; margin-top: 16px;
+}
+.jamal-card {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 36px;
+}
+.jamal-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--gradient-chrome); border: 1px solid var(--border-chrome);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne'; font-size: 22px; font-weight: 700; color: #080808;
+  margin-bottom: 16px;
+}
+.jamal-name { font-family: 'Syne'; font-size: 18px; font-weight: 600; color: var(--text-primary); }
+.jamal-sub { font-family: 'DM Sans'; font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+.jamal-stats { margin-top: 24px; }
+.jamal-stat-row {
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--border); padding: 14px 0;
+}
+.jamal-stat-row:last-child { border-bottom: none; }
+.jamal-stat-key { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.jamal-stat-val { font-family: 'Syne'; font-size: 14px; font-weight: 600; color: var(--text-primary); }
+
+/* FAQ */
+#faq { padding: 120px 0; }
+.faq-inner { max-width: 720px; margin: 0 auto; padding: 0 32px; }
+.faq-list { margin-top: 48px; }
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 22px 0; cursor: pointer; gap: 16px;
+}
+.faq-question { font-family: 'Syne'; font-size: 16px; font-weight: 500; color: var(--text-primary); }
+.faq-arrow { color: var(--text-muted); flex-shrink: 0; transition: transform 200ms ease; }
+.faq-item.open .faq-arrow { transform: rotate(180deg); }
+.faq-answer {
+  font-family: 'DM Sans'; font-size: 15px; color: var(--text-secondary); line-height: 1.65;
+  max-height: 0; overflow: hidden; transition: max-height 280ms ease, padding-bottom 200ms ease;
+}
+.faq-item.open .faq-answer { max-height: 300px; padding-bottom: 20px; }
+
+/* Final CTA */
+#final-cta {
+  padding: 160px 0; text-align: center;
+  background: var(--bg-base);
+  background-image: radial-gradient(ellipse at 50% 100%, rgba(192,192,192,0.04) 0%, transparent 60%);
+}
+.final-heading {
+  font-family: 'Syne'; font-weight: 800; font-size: clamp(36px, 5vw, 58px);
+  font-style: italic; line-height: 1.05; color: var(--text-primary);
+  margin-bottom: 20px;
+}
+.final-sub { font-family: 'DM Sans'; font-size: 16px; color: var(--text-secondary); line-height: 1.65; max-width: 460px; margin: 0 auto 40px; }
+.final-note { font-family: 'DM Sans'; font-size: 13px; color: var(--text-muted); margin-top: 16px; }
+
+/* Footer */
+#footer { background: #050505; border-top: 1px solid var(--border); padding: 60px 0 40px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; }
+.footer-logo img { height: 26px; margin-bottom: 12px; }
+.footer-tagline { font-family: 'DM Sans'; font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
+.footer-social { display: flex; gap: 12px; }
+.footer-social a { color: var(--text-muted); transition: color 150ms ease; }
+.footer-social a:hover { color: var(--text-secondary); }
+.footer-col-title { font-family: 'DM Sans'; font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
+.footer-links { display: flex; flex-direction: column; gap: 10px; }
+.footer-links a { font-family: 'DM Sans'; font-size: 14px; color: var(--text-secondary); text-decoration: none; transition: color 150ms ease; }
+.footer-links a:hover { color: var(--text-primary); }
+.footer-bottom { border-top: 1px solid var(--border); margin-top: 40px; padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+.footer-copy { font-family: 'JetBrains Mono'; font-size: 11px; color: var(--text-muted); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  body.js-loaded .reveal { opacity: 1 !important; transform: none !important; }
+  .reveal { transition: none; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .hero-sub { font-size: 16px; }
+  .problem-grid { grid-template-columns: 1fr; gap: 40px; }
+  .product-grid { grid-template-columns: 1fr; }
+  .how-sticky { grid-template-columns: 1fr; padding: 0 24px; }
+  .bento-grid { grid-template-columns: 1fr; }
+  .bento-card.span2 { grid-column: span 1; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .pricing-card.elite { margin-top: 0; order: -1; }
+  .elite-grid { grid-template-columns: 1fr; }
+  .vault-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .section-inner { padding: 0 20px; }
+  .section-pad { padding: 80px 0; }
+}
+@media (max-width: 480px) {
+  .footer-grid { grid-template-columns: 1fr; }
+  .hero-ctas { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav" role="navigation">
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <a href="/"><img src="./brand_assets/Whyzer%20White.png" alt="Whyzer" height="30" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/><span style="display:none;font-family:Syne;font-weight:700;font-size:18px;letter-spacing:0.12em;background:var(--gradient-chrome-text);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">WHYZER</span></a>
+    </div>
+    <nav class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#elite">The Vault</a>
+    </nav>
+    <div class="nav-right">
+      <a href="#" class="nav-login">Log In</a>
+      <a href="#pricing" class="btn-chrome" style="font-size:14px;padding:8px 20px;border-radius:6px;">Start Free</a>
+    </div>
+    <div class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#features">Features</a>
+  <a href="#how-it-works">How It Works</a>
+  <a href="#pricing">Pricing</a>
+  <a href="#elite">The Vault</a>
+  <a href="#">Log In</a>
+  <a href="#pricing" class="btn-chrome" style="font-size:15px;padding:12px 24px;border-radius:7px;width:100%;justify-content:center;margin-top:8px;">Start Free</a>
+</div>
+
+<!-- HERO -->
+<section id="hero" aria-label="Hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-parallax" id="hero-parallax">
+    <!-- canvas sits behind content, parallax on wrapper -->
+  </div>
+  <div class="hero-content">
+    <p class="hero-eyebrow reveal">AI POINT OF VIEW PLATFORM FOR ENTERPRISE SELLERS</p>
+    <h1 class="hero-h1 reveal" data-delay="1">
+      Read the Financial Story.<br/>
+      <span class="text-chrome">Write the Sales Story.</span>
+    </h1>
+    <p class="hero-sub reveal" data-delay="2">
+      Whyzer turns thousands of financial data points from SEC filings,
+      earnings calls, and board-level sources into boardroom-ready
+      Points of View — instantly.
+    </p>
+    <div class="hero-ctas reveal" data-delay="3">
+      <a href="#pricing" class="btn-chrome" style="font-size:15px;font-weight:600;height:50px;padding:0 30px;border-radius:7px;">Start Free — 3 Accounts</a>
+      <a href="#how-it-works" class="btn-ghost" style="font-size:15px;height:50px;padding:0 26px;border-radius:7px;">Watch 90-Second Demo →</a>
+    </div>
+    <div class="hero-social reveal" data-delay="4">
+      <span class="hero-stars" aria-label="5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+      <span>Rated 4.9 by enterprise AEs &nbsp;&middot;&nbsp; Used by reps closing 7- &amp; 8-figure deals</span>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <i data-lucide="chevron-down" class="scroll-chevron" style="width:20px;height:20px;"></i>
+    <span>SCROLL TO EXPLORE</span>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div id="trust-bar" aria-label="Trusted companies">
+  <span class="trust-label">Trusted by AEs at</span>
+  <div class="trust-marquee-wrap">
+    <div class="trust-track" id="trust-track">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEM STATEMENT -->
+<section id="problem" class="section-pad" aria-label="The Problem">
+  <div class="section-inner">
+    <div class="problem-grid">
+      <div class="problem-left">
+        <p class="problem-statement reveal">
+          Most sellers pitch operational benefits to low-level stakeholders.
+        </p>
+        <div style="margin-top:28px;"></div>
+        <p class="problem-statement reveal" data-delay="1" style="font-style:italic;" >
+          <span class="text-chrome">Elite sellers craft financial narratives for executives.</span>
+        </p>
+      </div>
+      <div class="problem-cards reveal" data-delay="2">
+        <div class="problem-card">
+          <div class="problem-card-icon"><i data-lucide="clock" style="width:16px;height:16px;"></i></div>
+          <div>
+            <div class="problem-card-title">5–10 hours of manual research</div>
+            <div class="problem-card-body">AEs spend days digging through filings, transcripts, and reports that could be synthesized in seconds.</div>
+          </div>
+        </div>
+        <div class="problem-card">
+          <div class="problem-card-icon"><i data-lucide="trending-down" style="width:16px;height:16px;"></i></div>
+          <div>
+            <div class="problem-card-title">Generic pitches that lose deals</div>
+            <div class="problem-card-body">Without financial context, sellers default to product features — the language of middle management, not the C-suite.</div>
+          </div>
+        </div>
+        <div class="problem-card">
+          <div class="problem-card-icon"><i data-lucide="lock" style="width:16px;height:16px;"></i></div>
+          <div>
+            <div class="problem-card-title">Intelligence locked in PDFs nobody reads</div>
+            <div class="problem-card-body">Critical insights buried in 200-page 10-Ks and hour-long earnings calls that no rep has time to parse.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT SHOWCASE -->
+<section id="product">
+  <div class="section-inner">
+    <p class="eyebrow reveal">THE PRODUCT</p>
+    <h2 class="section-heading reveal" data-delay="1" style="max-width:600px;margin-bottom:56px;">From Account to Boardroom Narrative in Minutes</h2>
+    <div class="product-grid">
+      <div class="product-tabs">
+        <div class="product-tab active" data-tab="0">
+          <div class="product-tab-label">Executive Intelligence</div>
+          <div class="product-tab-body">AI-synthesized dossiers on every executive — priorities, pressures, past statements, and boardroom angles. Know who you're meeting before you walk in.</div>
+        </div>
+        <div class="product-tab" data-tab="1">
+          <div class="product-tab-label">Financial KPIs</div>
+          <div class="product-tab-body">Extracted revenue, EBITDA, headcount, and 40+ metrics from SEC filings and earnings calls. Speak the CFO's language on day one.</div>
+        </div>
+        <div class="product-tab" data-tab="2">
+          <div class="product-tab-label">AI-Generated POVs</div>
+          <div class="product-tab-body">3–5 boardroom-ready Points of View per account, each tied to a financial signal. Not generic talking points — precision narratives.</div>
+        </div>
+        <div class="product-tab" data-tab="3">
+          <div class="product-tab-label">AI Podcast Summaries</div>
+          <div class="product-tab-body">Earnings calls and investor days distilled into 5-minute audio briefings. Get the signal without the 90-minute transcript.</div>
+        </div>
+      </div>
+      <div class="product-mockup" style="position:relative;">
+        <div class="mockup-titlebar">
+          <div class="mockup-dots">
+            <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
+          </div>
+          <div class="mockup-url">app.whyzer.ai</div>
+        </div>
+        <div class="mockup-body">
+          <div class="mockup-sidebar">
+            <div class="mockup-sidebar-dot"></div>
+            <div class="mockup-sidebar-dot"></div>
+            <div class="mockup-sidebar-dot"></div>
+            <div class="mockup-sidebar-dot"></div>
+          </div>
+          <div class="mockup-main">
+            <div class="mockup-pov-card">
+              <div class="mockup-pov-title">AI Infrastructure Investment POV — NVIDIA Q3 2025</div>
+              <div class="mockup-tags">
+                <span class="mockup-tag">10-K Analysis</span>
+                <span class="mockup-tag">CFO Priority</span>
+                <span class="mockup-tag">Q3 2025</span>
+              </div>
+              <div class="mockup-lines">
+                <div class="mockup-line" style="width:95%"></div>
+                <div class="mockup-line" style="width:88%"></div>
+                <div class="mockup-line" style="width:72%"></div>
+              </div>
+              <div class="mockup-actions">
+                <button class="mockup-btn-primary">Generate POV</button>
+                <button class="mockup-btn-ghost">Export</button>
+              </div>
+            </div>
+            <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
+              <div style="height:8px;border-radius:2px;background:var(--border);width:80%"></div>
+              <div style="height:8px;border-radius:2px;background:var(--border);width:60%"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Floating badges -->
+        <div class="floating-badge" style="top:60px;right:-16px;animation:float-1 3.5s ease-in-out infinite;">
+          10-K Filed Q1 · <span class="val">New</span>
+        </div>
+        <div class="floating-badge" style="top:130px;right:-20px;animation:float-2 4s ease-in-out infinite 0.5s;">
+          Revenue: <span class="val">$60.9B</span>
+        </div>
+        <div class="floating-badge" style="bottom:80px;right:-12px;animation:float-3 3.8s ease-in-out infinite 1s;">
+          CEO: <span class="val">"AI infra..."</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works" ref="howSection">
+  <div class="how-sticky" id="how-sticky">
+    <div class="how-left">
+      <p class="eyebrow">HOW IT WORKS</p>
+      <h2 class="how-heading">Three Steps to a Boardroom-Ready POV</h2>
+      <div class="how-steps" id="how-steps">
+        <div class="how-progress-line"></div>
+        <div class="how-progress-fill" id="how-progress-fill" style="height:0%"></div>
+        <div class="how-progress-dots" id="how-dots">
+          <div class="how-dot" id="dot-0"></div>
+          <div class="how-dot" id="dot-1"></div>
+          <div class="how-dot" id="dot-2"></div>
+        </div>
+        <!-- Step 0 -->
+        <div class="how-step">
+          <div class="how-step-num active" id="step-num-0">01</div>
+          <div class="how-step-title active" id="step-title-0">Enter Your Account</div>
+          <div class="how-step-body active" id="step-body-0">Type any public or private company name. Whyzer instantly locates SEC filings, earnings transcripts, and board-level intelligence.</div>
+          <div class="how-micro active" id="step-micro-0">
+            <div class="how-search">NVIDIA <span class="cursor">|</span></div>
+          </div>
+        </div>
+        <!-- Step 1 -->
+        <div class="how-step">
+          <div class="how-step-num" id="step-num-1">02</div>
+          <div class="how-step-title" id="step-title-1">AI Analyzes the Data</div>
+          <div class="how-step-body" id="step-body-1">Our AI runs 847 specialized prompts across financial filings, extracting KPIs, executive priorities, and material risks in seconds.</div>
+          <div class="how-micro" id="step-micro-1">
+            <div class="how-loader">
+              <span class="spin" style="color:var(--text-secondary);width:16px;height:16px;display:inline-flex;">
+                <i data-lucide="loader-2" style="width:16px;height:16px;"></i>
+              </span>
+              <span class="how-loader-text">Analyzing 2,847 data points...</span>
+            </div>
+          </div>
+        </div>
+        <!-- Step 2 -->
+        <div class="how-step">
+          <div class="how-step-num" id="step-num-2">03</div>
+          <div class="how-step-title" id="step-title-2">Your POV is Ready</div>
+          <div class="how-step-body" id="step-body-2">Receive 3–5 precision Points of View, each tied to a financial signal. Executive-ready, boardroom-tested, deal-closing narratives.</div>
+          <div class="how-micro" id="step-micro-2">
+            <span class="how-pov-badge">POV Generated ✓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="how-right">
+      <div class="how-video-container">
+        <canvas id="how-canvas" width="1280" height="800"></canvas>
+        <div class="how-overlay">
+          <div class="how-label active" id="how-label-0">ACCESSING SEC FILINGS · EARNINGS CALLS · INVESTOR LETTERS</div>
+          <div class="how-label" id="how-label-1">EXTRACTING FINANCIAL SIGNALS · RUNNING 847 PROMPTS</div>
+          <div class="how-label teal" id="how-label-2">POINT OF VIEW READY</div>
+        </div>
+        <div class="how-loading" id="how-loading">
+          <svg width="120" height="40" viewBox="0 0 120 40" fill="none">
+            <path class="wave-animate" d="M0,20 C15,20 15,5 30,12 C45,20 45,5 60,10 C75,15 75,0 90,8 C105,16 105,5 120,10" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
+          </svg>
+          <span class="how-loading-text">Loading...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAVE DIVIDER -->
+<div class="wave-divider" aria-hidden="true">
+  <svg width="100%" height="40" preserveAspectRatio="none" viewBox="0 0 1440 40">
+    <path d="M0,20 C60,20 60,5 120,12 C180,20 180,5 240,10 C300,15 300,0 360,8 C420,16 420,5 480,10 C540,15 540,0 600,8 C660,16 660,5 720,12 C780,20 780,5 840,10 C900,15 900,0 960,8 C1020,16 1020,5 1080,10 C1140,15 1140,0 1200,8 C1260,16 1260,5 1320,12 C1380,20 1380,5 1440,10" stroke="#C0C0C0" stroke-width="1.5" fill="none"/>
+  </svg>
+</div>
+
+<!-- FEATURES BENTO -->
+<section id="features" aria-label="Features">
+  <div class="section-inner">
+    <p class="eyebrow reveal">FEATURES</p>
+    <h2 class="section-heading reveal" data-delay="1" style="margin-bottom:40px;">The Arsenal of an Elite Seller</h2>
+    <div class="bento-grid">
+      <!-- Card 1 — col-span-2, area chart -->
+      <div class="bento-card span2 reveal">
+        <div class="bento-chart-area">
+          <svg id="area-chart" width="100%" height="130" viewBox="0 0 800 130" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="area-grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#C0C0C0" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#C0C0C0" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path id="area-path" fill="url(#area-grad)"/>
+            <path id="line-path" fill="none" stroke="#EFEFEF" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="bento-card-title">Follow the Money</div>
+        <div class="bento-card-body">Track every material financial event — earnings, filings, guidance changes, acquisitions — the moment they happen. Never walk into a meeting with stale data again.</div>
+      </div>
+      <!-- Card 2 — audio bars -->
+      <div class="bento-card reveal" data-delay="1">
+        <div class="bento-bars">
+          <div class="bento-bar" style="height:100%"></div>
+          <div class="bento-bar" style="height:60%"></div>
+          <div class="bento-bar" style="height:80%"></div>
+          <div class="bento-bar" style="height:40%"></div>
+          <div class="bento-bar" style="height:70%"></div>
+        </div>
+        <div class="bento-card-title">AI Podcast Briefings</div>
+        <div class="bento-card-body">Earnings calls transformed into 5-minute audio briefings. The signal, without the noise.</div>
+      </div>
+      <!-- Card 3 — quote mark -->
+      <div class="bento-card reveal" data-delay="2">
+        <span class="bento-quote-mark">"</span>
+        <div class="bento-card-title">Executive Nuggets</div>
+        <div class="bento-card-body">AI-extracted C-suite and board quotes, categorized by theme. Walk in knowing exactly what the CEO said last quarter.</div>
+      </div>
+      <!-- Card 4 — bar chart, col-span-2 -->
+      <div class="bento-card span2 reveal">
+        <div style="height:100px;margin-bottom:16px;">
+          <svg id="bar-chart" width="100%" height="100" viewBox="0 0 800 100" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="bento-card-title">Interactive Visualizations</div>
+        <div class="bento-card-body">Revenue trends, margin evolution, headcount growth — rendered as boardroom-ready charts you can drop straight into your deck.</div>
+      </div>
+      <!-- Card 5 -->
+      <div class="bento-card reveal" data-delay="1">
+        <div class="bento-icon"><i data-lucide="shield" style="width:20px;height:20px;"></i></div>
+        <div class="bento-card-title">Secure by Design</div>
+        <div class="bento-card-body">SOC 2 Type II compliant. Your account data and research stay private — never used to train models or shared with third parties.</div>
+      </div>
+      <!-- Card 6 -->
+      <div class="bento-card reveal" data-delay="2">
+        <div class="bento-icon"><i data-lucide="network" style="width:20px;height:20px;"></i></div>
+        <div class="bento-card-title">Built for Scale</div>
+        <div class="bento-card-body">From one AE to an entire enterprise team. Unlimited company coverage, team workspaces, and CRM-ready exports.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials" aria-label="Testimonials">
+  <div style="max-width:1100px;margin:0 auto;padding:0 32px;text-align:center;margin-bottom:48px;">
+    <p class="eyebrow reveal">WHAT ELITE SELLERS SAY</p>
+    <h2 class="section-heading reveal" data-delay="1">Built for Reps Who Close the Big Ones</h2>
+  </div>
+  <div class="test-row marquee-wrap">
+    <div class="test-track marquee-l" id="test-row-1"></div>
+  </div>
+  <div class="test-row marquee-wrap" style="margin-top:12px;">
+    <div class="test-track marquee-r" id="test-row-2"></div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" aria-label="Pricing">
+  <div class="section-inner" style="text-align:center;">
+    <p class="eyebrow reveal">PRICING</p>
+    <h2 class="section-heading reveal" data-delay="1">Choose Your Competitive Edge</h2>
+    <div class="billing-toggle-wrap reveal" data-delay="2">
+      <span class="billing-label" id="label-monthly">Monthly</span>
+      <div class="toggle-pill on" id="billing-toggle" role="switch" aria-checked="true">
+        <div class="toggle-knob"></div>
+      </div>
+      <span class="billing-label active" id="label-annual">Annual</span>
+      <span class="billing-save">Save up to 17%</span>
+    </div>
+  </div>
+  <div style="max-width:1100px;margin:0 auto;padding:0 32px;" class="reveal" data-delay="3">
+    <div class="pricing-grid">
+      <!-- Premium -->
+      <div class="pricing-card">
+        <div class="pricing-top">
+          <span class="pricing-plan-name">PREMIUM PLAN</span>
+          <span class="pricing-tier-pill">STARTER</span>
+        </div>
+        <div class="pricing-price">
+          <span class="price-annual">$47</span>
+          <span class="price-monthly">$57</span>
+          <span class="pricing-mo">/mo</span>
+        </div>
+        <div class="pricing-sub sub-annual">$570/year</div>
+        <div class="pricing-sub sub-monthly">billed monthly</div>
+        <div class="pricing-divider"></div>
+        <div class="pricing-features">
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">Public &amp; private companies worldwide</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">Unlimited Company reports</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">Up to 30 new companies/month</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">Unlimited DealMap</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">2 podcast generations/month</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">2 Executive POV Dossiers</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">Email Campaign Generator</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">Chat with WhyzerAI</span></div>
+        </div>
+        <a href="#" class="pricing-cta-ghost">Upgrade to Premium</a>
+      </div>
+      <!-- Elite -->
+      <div class="pricing-card elite">
+        <div class="pricing-badge">✦ MOST POPULAR</div>
+        <div class="pricing-top">
+          <span class="pricing-plan-name elite-name">ELITE PLAN</span>
+          <span class="pricing-tier-pill elite-pill">FULL ACCESS</span>
+        </div>
+        <div class="pricing-price text-chrome">
+          <span class="price-annual">$83</span>
+          <span class="price-monthly">$97</span>
+          <span class="pricing-mo" style="-webkit-text-fill-color:var(--text-secondary);background:none;">/mo</span>
+        </div>
+        <div class="pricing-sub sub-annual">$997/year</div>
+        <div class="pricing-sub sub-monthly">billed monthly</div>
+        <div class="pricing-divider" style="background:rgba(192,192,192,0.1)"></div>
+        <div class="pricing-features">
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--chrome-mid)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text elite-text">Public &amp; private companies worldwide</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--chrome-mid)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text elite-text">Unlimited Company reports</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--chrome-mid)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text elite-text">Unlimited new companies/month</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--chrome-mid)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text elite-text">Unlimited podcast generation</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--chrome-mid)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text elite-text">Unlimited Executive POV Dossiers</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--chrome-mid)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text elite-text">Email Campaign Generator</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--chrome-mid)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text elite-text">Chat with WhyzerAI</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--chrome-mid)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text elite-text">Monthly live sessions</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--chrome-mid)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text elite-text">Access to Coach Jamal — your AI sales co-pilot</span></div>
+          <div class="pricing-feature vault-row">
+            <span class="pricing-feature-icon" style="color:var(--chrome-mid)"><i data-lucide="sparkles" style="width:14px;height:14px;"></i></span>
+            <span class="vault-row-text">ACCESS TO THE VAULT</span>
+          </div>
+        </div>
+        <a href="https://subscribe.whyzer.ai/elite-monthly" class="pricing-cta-chrome">Start Now</a>
+      </div>
+      <!-- Corporate -->
+      <div class="pricing-card">
+        <div class="pricing-top">
+          <span class="pricing-plan-name">CORPORATE PLAN</span>
+          <span class="pricing-tier-pill">TEAMS</span>
+        </div>
+        <div class="pricing-price" style="font-family:'Syne';font-size:50px;">Custom</div>
+        <div class="pricing-sub" style="font-family:'DM Sans';">Volume pricing available</div>
+        <div class="pricing-divider"></div>
+        <div class="pricing-features">
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">Everything in Elite</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">Unlimited seats &amp; user management</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">Dedicated account success manager</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">Custom onboarding &amp; team training</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">CRM &amp; Salesforce integration</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">Slack real-time alerts</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">Custom AI prompt configuration</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">SSO / Single Sign-On</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">Role-based access controls</span></div>
+          <div class="pricing-feature"><span class="pricing-feature-icon" style="color:var(--teal)"><i data-lucide="check" style="width:14px;height:14px;"></i></span><span class="pricing-feature-text">SLA &amp; compliance documentation</span></div>
+        </div>
+        <a href="mailto:sales@whyzer.ai" class="pricing-cta-ghost">Contact Sales →</a>
+      </div>
+    </div>
+    <p class="pricing-footer">🔒 Secure checkout · No credit card required to start · Cancel anytime</p>
+  </div>
+</section>
+
+<!-- DO MORE WITH ELITE -->
+<section id="elite" class="section-pad" aria-label="The Vault">
+  <div class="section-inner">
+    <div class="elite-grid">
+      <div>
+        <p class="eyebrow reveal">DO MORE WITH ELITE</p>
+        <h2 class="reveal" data-delay="1" style="font-family:'Syne';font-weight:700;font-size:clamp(32px,4vw,50px);line-height:1.1;color:var(--text-primary);margin-bottom:16px;">
+          It's Not Just a Tool.<br/>It's a Full Arsenal.
+        </h2>
+        <p class="reveal" data-delay="2" style="font-family:'DM Sans';font-size:16px;color:var(--text-secondary);max-width:440px;line-height:1.65;">
+          Every Whyzer Elite subscription includes full access to The Vault — Jamal Reimer's complete playbook for closing 7- and 8-figure deals.
+        </p>
+        <div class="exclusivity-badge reveal" data-delay="3">
+          <i data-lucide="sparkles" style="width:14px;height:14px;color:var(--chrome-mid);"></i>
+          <span style="font-family:'Syne';font-size:13px;font-weight:600;color:var(--chrome-mid);">Elite &amp; Corporate only</span>
+          <span style="color:var(--text-muted)">·</span>
+          <span style="font-family:'DM Sans';font-size:13px;color:var(--text-muted)">Not included in Premium.</span>
+        </div>
+        <div class="vault-grid reveal" data-delay="4">
+          <div class="vault-tile">
+            <span class="vault-tile-icon"><i data-lucide="target" style="width:16px;height:16px;"></i></span>
+            <span class="vault-tile-text">The Pipeline Flywheel</span>
+          </div>
+          <div class="vault-tile">
+            <span class="vault-tile-icon"><i data-lucide="trophy" style="width:16px;height:16px;"></i></span>
+            <span class="vault-tile-text">Elite Sellers Playbook</span>
+          </div>
+          <div class="vault-tile">
+            <span class="vault-tile-icon"><i data-lucide="bar-chart-2" style="width:16px;height:16px;"></i></span>
+            <span class="vault-tile-text">MDA Masterclass</span>
+          </div>
+          <div class="vault-tile">
+            <span class="vault-tile-icon"><i data-lucide="mail" style="width:16px;height:16px;"></i></span>
+            <span class="vault-tile-text">Executive Outreach Course</span>
+          </div>
+          <div class="vault-tile">
+            <span class="vault-tile-icon"><i data-lucide="layers" style="width:16px;height:16px;"></i></span>
+            <span class="vault-tile-text">Top, Middle &amp; Bottom Funnel Playbooks</span>
+          </div>
+          <div class="vault-tile">
+            <span class="vault-tile-icon"><i data-lucide="mic" style="width:16px;height:16px;"></i></span>
+            <span class="vault-tile-text">Live Monthly Sessions with Jamal</span>
+          </div>
+        </div>
+      </div>
+      <div class="reveal" data-delay="2">
+        <div class="jamal-card">
+          <div class="jamal-avatar">JR</div>
+          <div class="jamal-name">Jamal Reimer</div>
+          <div class="jamal-sub">Your AI Sales Co-Pilot</div>
+          <div class="jamal-stats">
+            <div class="jamal-stat-row">
+              <span class="jamal-stat-key">Ranking</span>
+              <span class="jamal-stat-val">Top 0.1% Oracle Seller Globally</span>
+            </div>
+            <div class="jamal-stat-row">
+              <span class="jamal-stat-key">Revenue Closed</span>
+              <span class="jamal-stat-val text-chrome">$160M+ SaaS</span>
+            </div>
+            <div class="jamal-stat-row">
+              <span class="jamal-stat-key">Recognition</span>
+              <span class="jamal-stat-val">President's Club — Multiple Years</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" aria-label="FAQ">
+  <div class="faq-inner">
+    <p class="eyebrow reveal" style="text-align:center;">FAQS</p>
+    <h2 class="section-heading reveal" data-delay="1" style="text-align:center;">Questions, Answered.</h2>
+    <div class="faq-list" role="list">
+      <div class="faq-item" role="listitem">
+        <div class="faq-row" aria-expanded="false" role="button" tabindex="0">
+          <span class="faq-question">How is Whyzer different from ChatGPT or Perplexity?</span>
+          <i data-lucide="chevron-down" class="faq-arrow" style="width:18px;height:18px;"></i>
+        </div>
+        <div class="faq-answer">ChatGPT and Perplexity are general-purpose AI tools. Whyzer is purpose-built for enterprise sellers — it has deep integrations with SEC EDGAR, earnings call databases, and financial data sources. It doesn't just retrieve information; it synthesizes financial signals into boardroom-ready Points of View that map directly to executive priorities. The output is deal-ready, not research-ready.</div>
+      </div>
+      <div class="faq-item" role="listitem">
+        <div class="faq-row" aria-expanded="false" role="button" tabindex="0">
+          <span class="faq-question">How does Whyzer work?</span>
+          <i data-lucide="chevron-down" class="faq-arrow" style="width:18px;height:18px;"></i>
+        </div>
+        <div class="faq-answer">Enter any company name. Whyzer retrieves their latest SEC filings (10-K, 10-Q, 8-K), earnings call transcripts, investor presentations, and board-level documents. Our AI runs 847 specialized prompts across this data to extract KPIs, executive priorities, and material risks. Within minutes, you receive 3–5 executive-ready Points of View tied to specific financial signals.</div>
+      </div>
+      <div class="faq-item" role="listitem">
+        <div class="faq-row" aria-expanded="false" role="button" tabindex="0">
+          <span class="faq-question">Is my data secure?</span>
+          <i data-lucide="chevron-down" class="faq-arrow" style="width:18px;height:18px;"></i>
+        </div>
+        <div class="faq-answer">Yes. Whyzer is SOC 2 Type II compliant. Your account research and sales intelligence are never used to train AI models, never shared with third parties, and never visible to other users. All data is encrypted in transit and at rest. Enterprise plans include SSO, role-based access controls, and compliance documentation.</div>
+      </div>
+      <div class="faq-item" role="listitem">
+        <div class="faq-row" aria-expanded="false" role="button" tabindex="0">
+          <span class="faq-question">Does Whyzer cover international companies?</span>
+          <i data-lucide="chevron-down" class="faq-arrow" style="width:18px;height:18px;"></i>
+        </div>
+        <div class="faq-answer">Yes. Whyzer covers public companies globally — including those listed on NYSE, NASDAQ, LSE, TSX, ASX, and major European and Asian exchanges. For private companies, we aggregate available intelligence from press releases, news, LinkedIn data, and investor documents. Coverage improves continuously as we expand our data partnerships.</div>
+      </div>
+      <div class="faq-item" role="listitem">
+        <div class="faq-row" aria-expanded="false" role="button" tabindex="0">
+          <span class="faq-question">Can Whyzer integrate with my CRM?</span>
+          <i data-lucide="chevron-down" class="faq-arrow" style="width:18px;height:18px;"></i>
+        </div>
+        <div class="faq-answer">CRM integration (Salesforce, HubSpot, and others) is available on Corporate plans. This includes bi-directional sync, account enrichment directly into your CRM fields, Slack real-time alerts, and custom workflow triggers. Elite users can export research in CRM-ready formats manually.</div>
+      </div>
+      <div class="faq-item" role="listitem">
+        <div class="faq-row" aria-expanded="false" role="button" tabindex="0">
+          <span class="faq-question">What's included in The Vault?</span>
+          <i data-lucide="chevron-down" class="faq-arrow" style="width:18px;height:18px;"></i>
+        </div>
+        <div class="faq-answer">The Vault is Jamal Reimer's complete enterprise sales playbook — built from closing $160M+ in SaaS deals. It includes: The Pipeline Flywheel, Elite Sellers Playbook, MDA Masterclass, Executive Outreach Course, Top/Middle/Bottom Funnel Playbooks, and access to live monthly sessions with Jamal. Exclusive to Elite and Corporate subscribers.</div>
+      </div>
+      <div class="faq-item" role="listitem">
+        <div class="faq-row" aria-expanded="false" role="button" tabindex="0">
+          <span class="faq-question">Why is there a free tier?</span>
+          <i data-lucide="chevron-down" class="faq-arrow" style="width:18px;height:18px;"></i>
+        </div>
+        <div class="faq-answer">We believe the best way to prove our value is to let you experience it. The free tier gives you full access for up to 3 accounts — enough to run a real deal cycle and see exactly what Whyzer does for your pipeline. No credit card required. No time limit. If it helps you close deals, you'll know.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section id="final-cta" aria-label="Get Started">
+  <div style="max-width:600px;margin:0 auto;padding:0 32px;">
+    <h2 class="final-heading reveal">
+      Stop Researching.<br/>Start Commanding.
+    </h2>
+    <p class="final-sub reveal" data-delay="1">
+      Every minute you spend manually researching accounts is a minute your competition is already in the room. Whyzer gives you the financial intelligence to own every executive conversation.
+    </p>
+    <a href="#pricing" class="btn-chrome reveal" data-delay="2" style="font-size:16px;font-weight:600;height:56px;padding:0 40px;border-radius:8px;">
+      Start Free — 3 Accounts Included
+    </a>
+    <p class="final-note reveal" data-delay="3">No credit card required · Cancel anytime</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="footer" aria-label="Footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">
+          <img src="./brand_assets/Whyzer%20White.png" alt="Whyzer" height="26" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/><span style="display:none;font-family:Syne;font-weight:700;font-size:16px;letter-spacing:0.12em;background:var(--gradient-chrome-text);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">WHYZER</span>
+        </div>
+        <p class="footer-tagline">AI Point of View Platform<br/>for enterprise sellers.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="LinkedIn"><i data-lucide="linkedin" style="width:16px;height:16px;"></i></a>
+          <a href="#" aria-label="X / Twitter"><i data-lucide="twitter" style="width:16px;height:16px;"></i></a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Product</div>
+        <div class="footer-links">
+          <a href="#features">Features</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#elite">The Vault</a>
+          <a href="#pricing">Pricing</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Resources</div>
+        <div class="footer-links">
+          <a href="#">Whyzer Academy</a>
+          <a href="#">Success Stories</a>
+          <a href="#faq">FAQ</a>
+          <a href="#">Blog</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <div class="footer-links">
+          <a href="#">About</a>
+          <a href="mailto:sales@whyzer.ai">Contact</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 Whyzer.ai · All rights reserved</span>
+      <span class="footer-copy">Built for reps who close the big ones.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+const TOTAL_FRAMES = 240;
+
+// ─── UTILITIES ────────────────────────────────────────────────────────────────
+function lerp(a, b, t) { return a + (b - a) * t; }
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+// ─── LUCIDE ICONS ─────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+});
+
+// ─── NAV SCROLL ───────────────────────────────────────────────────────────────
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+// ─── HAMBURGER ────────────────────────────────────────────────────────────────
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+hamburger.addEventListener('click', () => {
+  mobileMenu.classList.toggle('open');
+});
+mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  mobileMenu.classList.remove('open');
+}));
+
+// ─── HERO CANVAS ──────────────────────────────────────────────────────────────
+(function() {
+  const canvas = document.getElementById('hero-canvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, cx, cy;
+
+  function resize() {
+    w = canvas.width = canvas.offsetWidth;
+    h = canvas.height = canvas.offsetHeight;
+    cx = w / 2; cy = h / 2;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Particles
+  const PARTICLE_COUNT = 160;
+  const particles = [];
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    particles.push({
+      x: Math.random() * 1920,
+      y: Math.random() * 1080,
+      vx: (Math.random() - 0.5) * 0.16,
+      vy: 0.4 + Math.random() * 0.6,
+      teal: i % 3 === 0,
+      scatter: false,
+    });
+  }
+
+  // Ellipses
+  const ellipses = [
+    { r: 380, angle: 0, speed: 0.0003 },
+    { r: 560, angle: 1.0, speed: 0.0006 },
+    { r: 720, angle: 2.1, speed: 0.001 },
+  ];
+
+  // Scan line
+  let scanY = 0;
+  const SCAN_SPEED = 1080 / (7 * 60);
+
+  // Mouse
+  let mx = 0, my = 0;
+  window.addEventListener('mousemove', (e) => {
+    mx = e.clientX; my = e.clientY;
+    particles.forEach(p => {
+      const dx = p.x - mx, dy = p.y - my;
+      if (dx*dx + dy*dy < 10000) { p.vy *= 2.5; p.scatter = true; }
+    });
+  }, { passive: true });
+
+  function drawWaveGrid() {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(200,200,200,0.015)';
+    ctx.lineWidth = 0.8;
+    for (let gx = 0; gx < w + 120; gx += 120) {
+      for (let gy = 0; gy < h + 60; gy += 60) {
+        ctx.beginPath();
+        const pts = [[0,30],[10,10],[20,20],[30,30],[40,15],[50,5],[60,10],[80,30]];
+        ctx.moveTo(gx + pts[0][0], gy + pts[0][1] - 30);
+        for (let k = 1; k < pts.length; k++) ctx.lineTo(gx + pts[k][0], gy + pts[k][1] - 30);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+
+  let rafId;
+  function animate() {
+    rafId = requestAnimationFrame(animate);
+    ctx.fillStyle = '#080808';
+    ctx.fillRect(0, 0, w, h);
+
+    // Wave grid
+    drawWaveGrid();
+
+    // Ellipses
+    ellipses.forEach(e => {
+      e.angle += e.speed;
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(e.angle);
+      ctx.scale(1, 0.35);
+      ctx.beginPath();
+      ctx.arc(0, 0, e.r, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(200,200,200,0.035)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    // Particles
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.scatter) { p.vy = Math.max(p.vy * 0.92, 0.4 + Math.random() * 0.6); p.scatter = false; }
+      if (p.y > h) { p.y = 0; p.x = Math.random() * w; }
+      if (p.x < 0) p.x = w;
+      if (p.x > w) p.x = 0;
+      ctx.fillStyle = p.teal ? 'rgba(94,234,212,0.18)' : 'rgba(200,200,200,0.25)';
+      ctx.fillRect(p.x, p.y, 1, 1);
+    });
+
+    // Scan line
+    scanY += SCAN_SPEED;
+    if (scanY > h) scanY = 0;
+    ctx.beginPath();
+    ctx.moveTo(0, scanY);
+    ctx.lineTo(w, scanY);
+    ctx.strokeStyle = 'rgba(200,200,200,0.025)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  animate();
+})();
+
+// ─── HERO PARALLAX ────────────────────────────────────────────────────────────
+(function() {
+  const parallax = document.getElementById('hero-parallax');
+  let targetX = 0.5, targetY = 0.5, currX = 0.5, currY = 0.5;
+  let rafId;
+
+  window.addEventListener('mousemove', (e) => {
+    targetX = e.clientX / window.innerWidth;
+    targetY = e.clientY / window.innerHeight;
+  }, { passive: true });
+
+  function tick() {
+    currX = lerp(currX, targetX, 0.055);
+    currY = lerp(currY, targetY, 0.055);
+    const rx = (currY - 0.5) * -3.5;
+    const ry = (currX - 0.5) * 5;
+    parallax.style.transform = `perspective(1600px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+    rafId = requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+// ─── TRUST BAR ────────────────────────────────────────────────────────────────
+(function() {
+  const companies = ['MSFT', 'ORCL', 'SAP', 'SFDC', 'DBRX', 'SNOW', 'AMZN', 'GOOG'];
+  const waveSvg = `<svg width="24" height="16" viewBox="0 0 24 16" fill="none" class="trust-sep"><path d="M0,8 C3,8 3,2 6,4 C9,8 9,2 12,4 C15,6 15,1 18,3 C21,5 21,2 24,4" stroke="#888888" stroke-width="1" fill="none"/></svg>`;
+  const track = document.getElementById('trust-track');
+  const items = [...companies, ...companies];
+  track.innerHTML = items.map(c => `<span class="trust-item">${c}${waveSvg}</span>`).join('');
+})();
+
+// ─── PRODUCT TABS ─────────────────────────────────────────────────────────────
+document.querySelectorAll('.product-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.product-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+
+// ─── HOW IT WORKS — VIDEO SCRUB ───────────────────────────────────────────────
+(function() {
+  const section = document.getElementById('how-it-works');
+  const canvas = document.getElementById('how-canvas');
+  const ctx = canvas.getContext('2d');
+  const loadingEl = document.getElementById('how-loading');
+  const progressFill = document.getElementById('how-progress-fill');
+
+  const frames = [];
+  let loadedCount = 0;
+  let currentFrame = 0;
+
+  // Preload all frames
+  for (let i = 1; i <= TOTAL_FRAMES; i++) {
+    const img = new Image();
+    img.src = `/frames/frame_${String(i).padStart(4, '0')}.jpg`;
+    img.onload = () => {
+      loadedCount++;
+      if (loadedCount >= Math.min(30, TOTAL_FRAMES)) {
+        // Hide loading once 30 frames are loaded
+        loadingEl.style.display = 'none';
+        drawFrame(0);
+      }
+    };
+    frames.push(img);
+  }
+
+  function drawFrame(idx) {
+    const img = frames[idx];
+    if (img && img.complete && img.naturalWidth > 0) {
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  // Step state
+  let activeStep = 0;
+
+  function setStep(step) {
+    if (step === activeStep) return;
+    activeStep = step;
+    for (let i = 0; i < 3; i++) {
+      const isActive = i === step;
+      const isPassed = i < step;
+      // Number
+      const num = document.getElementById(`step-num-${i}`);
+      const title = document.getElementById(`step-title-${i}`);
+      const body = document.getElementById(`step-body-${i}`);
+      const micro = document.getElementById(`step-micro-${i}`);
+      const dot = document.getElementById(`dot-${i}`);
+      num.classList.toggle('active', isActive);
+      title.classList.toggle('active', isActive);
+      body.classList.toggle('active', isActive);
+      micro.classList.toggle('active', isActive);
+      dot.classList.toggle('active', isActive || isPassed);
+      // Labels
+      document.getElementById(`how-label-${i}`).classList.toggle('active', isActive);
+    }
+  }
+
+  function onScroll() {
+    const rect = section.getBoundingClientRect();
+    const totalScroll = section.offsetHeight - window.innerHeight;
+    const scrolled = -rect.top;
+    const progress = clamp(scrolled / totalScroll, 0, 1);
+
+    // Frame index
+    const frameIdx = Math.round(progress * (TOTAL_FRAMES - 1));
+    if (frameIdx !== currentFrame) {
+      currentFrame = frameIdx;
+      drawFrame(frameIdx);
+    }
+
+    // Progress line
+    progressFill.style.height = (progress * 100) + '%';
+
+    // Steps
+    const step = Math.min(2, Math.floor(progress * 3));
+    setStep(step);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
+// ─── BENTO CHARTS ─────────────────────────────────────────────────────────────
+(function() {
+  // Area chart
+  const data = [12, 18, 15, 22, 20, 28, 25, 34, 30, 42, 38, 72];
+  const w = 800, h = 130;
+  const pad = 10;
+  const maxV = Math.max(...data);
+  const minV = Math.min(...data);
+  const pts = data.map((v, i) => {
+    const x = pad + (i / (data.length - 1)) * (w - pad * 2);
+    const y = h - pad - ((v - minV) / (maxV - minV)) * (h - pad * 2);
+    return [x, y];
+  });
+  const linePath = 'M ' + pts.map(p => p.join(',')).join(' L ');
+  const areaPath = linePath + ` L ${pts[pts.length-1][0]},${h} L ${pts[0][0]},${h} Z`;
+  document.getElementById('area-path').setAttribute('d', areaPath);
+  document.getElementById('line-path').setAttribute('d', linePath);
+
+  // Bar chart
+  const barData = [
+    { label: 'Revenue Growth', v: 0.85 },
+    { label: 'Gross Margin', v: 0.62 },
+    { label: 'R&D Spend', v: 0.45 },
+    { label: 'Free Cash Flow', v: 0.78 },
+    { label: 'Headcount', v: 0.38 },
+  ];
+  const bw = 800, bh = 100;
+  const barH = 16, barGap = 4;
+  const svg = document.getElementById('bar-chart');
+  svg.innerHTML = barData.map((d, i) => {
+    const y = i * (barH + barGap);
+    const barW = d.v * (bw - 120);
+    const alpha = 0.3 + d.v * 0.5;
+    return `<rect x="0" y="${y}" width="${barW}" height="${barH}" rx="2" fill="rgba(192,192,192,${alpha})"/>
+            <text x="${barW + 8}" y="${y + barH - 4}" font-family="JetBrains Mono" font-size="10" fill="#666">${d.label}</text>`;
+  }).join('');
+})();
+
+// ─── TESTIMONIALS MARQUEE ─────────────────────────────────────────────────────
+(function() {
+  const quotes = [
+    { q: "Walked into a board-level meeting knowing exactly what the CFO was sweating. Closed a $4.2M deal that week.", a: "Enterprise AE, Fortune 500 Tech" },
+    { q: "I used to spend Sundays doing research. Now I spend them with my family. Whyzer gives me the same insights in 3 minutes.", a: "Senior AE, Cloud Infrastructure" },
+    { q: "The POV Whyzer generated for my NVIDIA deal was more insightful than anything our strategy team produced.", a: "Strategic Account Executive" },
+    { q: "Finally a tool that speaks CFO, not just IT buyer. My pipeline conversations have completely changed.", a: "VP Sales, SaaS Platform" },
+    { q: "Whyzer found a risk buried in a 10-Q footnote that became the entire hook of my pitch. Closed in 6 weeks.", a: "Enterprise AE, Data Analytics" },
+    { q: "I've been in enterprise sales for 12 years. This is the most unfair advantage I've ever had.", a: "Regional Director, Enterprise Sales" },
+  ];
+  const doubled = [...quotes, ...quotes];
+  const makeCard = q => `<div class="test-card">
+    <div class="test-quote-mark">"</div>
+    <div class="test-quote">${q.q}</div>
+    <div class="test-author">— ${q.a}</div>
+  </div>`;
+  document.getElementById('test-row-1').innerHTML = doubled.map(makeCard).join('');
+  document.getElementById('test-row-2').innerHTML = [...doubled].reverse().map(makeCard).join('');
+})();
+
+// ─── PRICING TOGGLE ───────────────────────────────────────────────────────────
+(function() {
+  const toggle = document.getElementById('billing-toggle');
+  const labelMonthly = document.getElementById('label-monthly');
+  const labelAnnual = document.getElementById('label-annual');
+  let isAnnual = true;
+
+  function updatePricing() {
+    document.querySelectorAll('.price-annual').forEach(el => {
+      el.style.display = isAnnual ? '' : 'none';
+    });
+    document.querySelectorAll('.price-monthly').forEach(el => {
+      el.style.display = isAnnual ? 'none' : '';
+    });
+    document.querySelectorAll('.sub-annual').forEach(el => {
+      el.style.display = isAnnual ? '' : 'none';
+    });
+    document.querySelectorAll('.sub-monthly').forEach(el => {
+      el.style.display = isAnnual ? 'none' : '';
+    });
+    toggle.classList.toggle('on', isAnnual);
+    toggle.setAttribute('aria-checked', isAnnual.toString());
+    labelAnnual.classList.toggle('active', isAnnual);
+    labelMonthly.classList.toggle('active', !isAnnual);
+  }
+
+  toggle.addEventListener('click', () => {
+    isAnnual = !isAnnual;
+    updatePricing();
+  });
+  updatePricing();
+})();
+
+// ─── FAQ ACCORDION ────────────────────────────────────────────────────────────
+document.querySelectorAll('.faq-row').forEach(row => {
+  row.addEventListener('click', () => {
+    const item = row.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+    row.setAttribute('aria-expanded', !isOpen);
+  });
+  row.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); row.click(); }
+  });
+});
+
+// ─── SCROLL REVEAL ────────────────────────────────────────────────────────────
+(function() {
+  // Activate animation mode — hides elements until observed
+  document.body.classList.add('js-loaded');
+
+  const observer = new IntersectionObserver(
+    entries => entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    }),
+    { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+  );
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  // Fallback: reveal all after 3s
+  setTimeout(() => {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  }, 3000);
+})();
+
+// ─── INIT LUCIDE AFTER EVERYTHING ────────────────────────────────────────────
+window.addEventListener('load', () => {
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+});
+</script>
+</body>
+</html>
